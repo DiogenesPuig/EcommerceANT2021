@@ -30,7 +30,7 @@ class Deposito(models.Model):
 class Carrito(models.Model):
     cliente = models.ForeignKey(Cliente,on_delete=models.CASCADE)
     producto_venta = models.ManyToManyField(Producto)
-    deposito = models.ForeignKey(Deposito,on_delete=models.CASCADE)
+    deposito = models.ForeignKey(Deposito,on_delete=models.CASCADE, default= None)
     monto_total = models.IntegerField(default=0)
 
 class Venta(models.Model):
