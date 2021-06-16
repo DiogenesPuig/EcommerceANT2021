@@ -24,14 +24,20 @@ class Producto(models.Model):
  #---------------------------------hace producto compra
 
 class Deposito(models.Model):
-    product_dep = models.ForeignKey(Producto,on_delete=models.CASCADE)
+    product = models.ForeignKey(Producto,on_delete=models.CASCADE)
     stock = models.IntegerField()
 
 class Carrito(models.Model):
     cliente = models.ForeignKey(Cliente,on_delete=models.CASCADE)
-    producto_venta = models.ManyToManyField(Producto)
-    deposito = models.ForeignKey(Deposito,on_delete=models.CASCADE, default= None)
+    producto_venta = models.ManyToManyField(Producto, through='ProductosCarrito')
     monto_total = models.IntegerField(default=0)
+    vendido = models.BooleanField()
+
+class ProductosCarrito(models.Model):
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    carrito = models.ForeignKey(Carrito, on_delete=models.CASCADE)
+    cant_prod = models.IntegerField()
+
 
 class Venta(models.Model):
     metodos_de_pago = [
