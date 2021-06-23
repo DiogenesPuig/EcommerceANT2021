@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+from six import python_2_unicode_compatible
+
 
 # Create your models here.
 class Cliente(models.Model):
