@@ -11,7 +11,7 @@ class ClienteAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ('Datos Personales', {
-            'fields' : ('nombre', 'apellido')
+            'fields' : ('user','nombre', 'apellido')
         }),
         ('Contacto', {
             'fields' : ('telefono', 'mail')
@@ -22,12 +22,16 @@ class ProveedorAdmin(admin.ModelAdmin):
     list_display = ('nombre', 'telefono')
 
 class CarritoAdmin(admin.ModelAdmin):
-    list_display = ('cliente',)
+    list_display = ('id','cliente','get_items_carrito','get_monto_carrito','vendido')
 
 class VentaAdmin(admin.ModelAdmin):
-    list_display = ('carrito', 'metodo_pago','fecha')
+    list_display = ('id','carrito', 'metodo_pago','fecha')
 
+class ProductosCarritoAdmin(admin.ModelAdmin):
+    list_display = ('cant_prod','get_total')
 
+class DepositoAdmin(admin.ModelAdmin):
+    list_display = ('producto','stock')
 
 
 # Register your models here.
@@ -37,5 +41,5 @@ admin.site.register(Proveedor, ProveedorAdmin)
 admin.site.register(Carrito, CarritoAdmin)
 admin.site.register(Venta, VentaAdmin)
 admin.site.register(Categoria)
-admin.site.register(Deposito)
-admin.site.register(ProductosCarrito)
+admin.site.register(Deposito,DepositoAdmin)
+admin.site.register(ProductosCarrito,ProductosCarritoAdmin)
