@@ -3,6 +3,8 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from model_utils import FieldTracker
+from six import python_2_unicode_compatible
+
 
 # Create your models here.
 class Cliente(models.Model):

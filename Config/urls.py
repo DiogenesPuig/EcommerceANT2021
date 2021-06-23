@@ -15,6 +15,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
+from django.utils.encoding import smart_text
+from six import python_2_unicode_compatible
 
 urlpatterns = [
     path('jet/', include('jet.urls', 'jet')),
