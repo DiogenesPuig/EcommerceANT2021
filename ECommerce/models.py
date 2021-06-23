@@ -1,5 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models.signals import post_save, pre_save
+from django.dispatch import receiver
+from model_utils import FieldTracker
 
 # Create your models here.
 class Cliente(models.Model):
@@ -65,6 +68,7 @@ class Carrito(models.Model):
     cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE)
     producto_venta = models.ManyToManyField(Producto, through='ProductosCarrito')
     vendido = models.BooleanField()
+    tracker = FieldTracker()
 
     class Meta:
         verbose_name = 'Carrito'
@@ -120,3 +124,19 @@ class Venta(models.Model):
 
     def __str__(self):
         return str(self.carrito)
+
+@receiver(post_save, sender=Carrito)
+def update_stock(sender, instance, created, **kwargs):
+    if not created:
+        if instance.vendido:
+            vendidoAnterior = instance.tracker.previous('vendido')
+            vendidoNuevo = instance.vendido
+            if vendidoAnterior != vendidoNuevo:
+                prod_carrito = ProductosCarrito.objects.filter(carrito = instance) 
+                if(prod_carrito.count() > 0):
+                    for item in prod_carrito:
+                        producto = Producto.objects.get(id = item.producto.id) 
+                        prod_stock = Deposito.objects.filter(producto = producto) 
+                        for deposito in prod_stock:
+                            deposito.stock -= item.cant_prod
+                            deposito.save()
