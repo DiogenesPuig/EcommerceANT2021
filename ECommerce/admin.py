@@ -28,7 +28,7 @@ class VentaAdmin(admin.ModelAdmin):
     list_display = ('id','carrito', 'metodo_pago','fecha')
 
 class ProductosCarritoAdmin(admin.ModelAdmin):
-    list_display = ('id','cant_prod','get_total')
+    list_display = ('carrito','producto','cant_prod','get_total')
 
 class DepositoAdmin(admin.ModelAdmin):
     list_display = ('producto','stock')
