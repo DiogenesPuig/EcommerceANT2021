@@ -77,16 +77,16 @@ class Cart(models.Model):
     def __str__(self):
         return str(self.id)
 
-    @property
-    def get_monto_cart (self):
-        products = self.product_in_cart_set.all()  #idk q es esto
-        total = sum([item.get_total for item in products])
+    @property # Decorator that allows to use a function as an attribute
+    def get_monto_cart (self): # Function to calculate total price in cart
+        products = self.productscart_set.all()  # This variable stores all the objects created of ProductsCart
+        total = sum([item.get_total for item in products]) # Simple for to calculate the total price using the funcion get_total from the class ProductsCart
         return total
 
     @property
-    def get_items_cart (self):
-        products = self.product_in_cart_set.all()
-        total = sum([item.cant_prod for item in products])
+    def get_items_cart (self): # Function to calculate amount of items in cart
+        products = self.productscart_set.all() # This variable stores all the objects created of ProductsCart
+        total = sum([item.cant_prod for item in products]) # Simple for to calculate the total amount of items
         return total    
     
 
@@ -96,14 +96,14 @@ class ProductsCart(models.Model):
     cant_prod = models.IntegerField(default=0)
 
     class Meta:
-        verbose_name = 'Productos en Carrito'
-        verbose_name_plural = 'Productos en Carritos'
+        verbose_name = 'Product in Cart'
+        verbose_name_plural = 'Products in Carts'
 
     def __str__(self):
         return str(self.cant_prod)
 
     @property
-    def get_total(self):
+    def get_total(self): # Function to calculate price of each type of product as a group(for example, total price of all the products1=$30, then product2=$35)
         total = self.product.price * self.cant_prod
         return total
 
@@ -125,18 +125,18 @@ class Sale(models.Model):
     def __str__(self):
         return str(self.cart)
 
-@receiver(post_save, sender=Cart)
-def update_stock(sender, instance, created, **kwargs):
-    if not created:
-        if instance.vendido:
-            previus_sale = instance.tracker.previous('vendido')
-            new_sale = instance.vendido
-            if previus_sale != new_sale:
-                prod_carrito = ProductsCart.objects.filter(carrito = instance)
-                if(prod_carrito.count() > 0):
-                    for item in prod_carrito:
-                        product = Product.objects.get(id = item.producto.id)
-                        prod_stock = Deposit.objects.filter(producto = product)
+@receiver(post_save, sender=Cart) 
+def update_stock(sender, instance, created, **kwargs): # function to update stock
+    if not created: # enters if the object was already created, which means, its being editated
+        if instance.sold: 
+            previus_sale = instance.tracker.previous('sold') # previous 
+            new_sale = instance.sold # current 
+            if previus_sale != new_sale: # enters if the current object being analized(instance) wasn't sold before, to avoid errors
+                prod_carrito = ProductsCart.objects.filter(cart = instance) # returns the products 
+                if(prod_carrito.count() > 0): # enters if the amount of products is more than zero, to avoid errors
+                    for item in prod_carrito: 
+                        product = Product.objects.get(id = item.product.id) # returns the product 
+                        prod_stock = Deposit.objects.filter(product = product) # returns the product stock
                         for deposit in prod_stock:
                             deposit.stock -= item.cant_prod
-                            deposit.save()
+                            deposit.save() # saves the object and modifies the stock
