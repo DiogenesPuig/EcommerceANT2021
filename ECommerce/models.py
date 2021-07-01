@@ -3,98 +3,96 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from model_utils import FieldTracker
-from six import python_2_unicode_compatible
-
 
 # Create your models here.
-class Cliente(models.Model):
+class Client(models.Model):
     user = models.OneToOneField(User,on_delete=models.CASCADE,null=True,blank=True)
-    nombre = models.CharField(max_length=50, default=None)
-    apellido = models.CharField(max_length=50, default=None)
-    telefono = models.CharField(max_length=15, default=None)
-    mail = models.EmailField(default=None)
+    first_name = models.CharField(max_length=50, default=None)
+    last_name = models.CharField(max_length=50, default=None)
+    tel = models.CharField(max_length=15, default=None)
+    email = models.EmailField(default=None)
 
     class Meta:
-        verbose_name = 'Cliente'
-        verbose_name_plural = 'Clientes'
+        verbose_name = 'Client'
+        verbose_name_plural = 'Clients'
 
     def __str__(self):
-        return self.nombre
+        return self.first_name
 
-class Proveedor(models.Model):
-    nombre = models.CharField(max_length=50)
-    telefono = models.CharField(max_length=15)
+class Supplier(models.Model):
+    name = models.CharField(max_length=50)
+    tel = models.CharField(max_length=15)
 
     class Meta:
-        verbose_name = 'Proveedor'
-        verbose_name_plural = 'Proveedores'
+        verbose_name = 'Supplier'
+        verbose_name_plural = 'Suppliers'
 
     def __str__(self):
-        return self.nombre
+        return self.name
 
-class Categoria(models.Model):
-    nombre = models.CharField(max_length=50)
+class Category(models.Model):
+    name = models.CharField(max_length=50)
     
     class Meta:
-        verbose_name = 'Categoria'
-        verbose_name_plural = 'Categorias'
+        verbose_name = 'Category'
+        verbose_name_plural = 'Categories'
 
     def __str__(self):
-        return self.nombre
+        return self.name
 
-class Producto(models.Model):
-    proveedor = models.ForeignKey(Proveedor, on_delete=models.CASCADE)
-    nombre = models.CharField(max_length=50)
-    precio = models.DecimalField(max_digits=6, decimal_places=2)
-    categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE)
+class Product(models.Model):
+    supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)
+    name = models.CharField(max_length=50)
+    price = models.DecimalField(max_digits=6, decimal_places=2)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
 
     class Meta:
-        verbose_name = 'Producto'
-        verbose_name_plural = 'Productos'
+        verbose_name = 'Product'
+        verbose_name_plural = 'Products'
 
     def __str__(self):
-        return self.nombre
+        return self.name
 
-class Deposito(models.Model):
-    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+class Deposit(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
     stock = models.PositiveIntegerField()
 
     class Meta:
-        verbose_name = 'Deposito'
-        verbose_name_plural = 'Depositos'
+        verbose_name = 'Deposit'
+        verbose_name_plural = 'Deposits'
     
     def __str__(self):
-        return str(self.producto)
+        return str(self.product)
 
-class Carrito(models.Model):
-    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE)
-    producto_venta = models.ManyToManyField(Producto, through='ProductosCarrito')
-    vendido = models.BooleanField()
+class Cart(models.Model):
+    client = models.ForeignKey(Client, on_delete=models.CASCADE)
+    product_sale = models.ManyToManyField(Product, through='ProductsCart')
+    sold = models.BooleanField()
     tracker = FieldTracker()
 
     class Meta:
-        verbose_name = 'Carrito'
-        verbose_name_plural = 'Carritos'
+        verbose_name = 'Cart'
+        verbose_name_plural = 'Carts'
 
     def __str__(self):
         return str(self.id)
 
     @property
-    def get_monto_carrito (self):
-        productos = self.productoscarrito_set.all()
-        total = sum([item.get_total for item in productos]) 
+    def get_monto_cart (self):
+        products = self.product_in_cart_set.all()  #idk q es esto
+        total = sum([item.get_total for item in products])
         return total
 
     @property
-    def get_items_carrito (self):
-        productos = self.productoscarrito_set.all()
-        total = sum([item.cant_prod for item in productos]) 
+    def get_items_cart (self):
+        products = self.product_in_cart_set.all()
+        total = sum([item.cant_prod for item in products])
         return total    
     
 
-class ProductosCarrito(models.Model):
-    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
-    carrito = models.ForeignKey(Carrito, on_delete=models.CASCADE)
+class ProductsCart(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
     cant_prod = models.IntegerField(default=0)
 
     class Meta:
@@ -106,39 +104,39 @@ class ProductosCarrito(models.Model):
 
     @property
     def get_total(self):
-        total = self.producto.precio * self.cant_prod
+        total = self.product.price * self.cant_prod
         return total
 
-class Venta(models.Model):
-    metodos_de_pago = [
+class Sale(models.Model):
+    payment_methods = [
         ('transferencia', 'transferencia'),
         ('debito', 'debito'),
         ('credito', 'credito'),
     ]
-    carrito = models.ForeignKey(Carrito, on_delete=models.CASCADE)
-    productoscarrito = models.ForeignKey(ProductosCarrito, on_delete=models.CASCADE)
-    fecha = models.DateTimeField(auto_now_add=True)
-    metodo_pago = models.CharField(max_length=50, choices=metodos_de_pago, default=None)
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
+    product_in_cart = models.ForeignKey(ProductsCart, on_delete=models.CASCADE)
+    date = models.DateTimeField(auto_now_add=True)
+    payment_method = models.CharField(max_length=50, choices=payment_methods, default=None)
 
     class Meta:
-        verbose_name = 'Venta'
-        verbose_name_plural = 'Ventas'
+        verbose_name = 'Sale'
+        verbose_name_plural = 'Sales'
 
     def __str__(self):
-        return str(self.carrito)
+        return str(self.cart)
 
-@receiver(post_save, sender=Carrito)
+@receiver(post_save, sender=Cart)
 def update_stock(sender, instance, created, **kwargs):
     if not created:
         if instance.vendido:
-            vendidoAnterior = instance.tracker.previous('vendido')
-            vendidoNuevo = instance.vendido
-            if vendidoAnterior != vendidoNuevo:
-                prod_carrito = ProductosCarrito.objects.filter(carrito = instance) 
+            previus_sale = instance.tracker.previous('vendido')
+            new_sale = instance.vendido
+            if previus_sale != new_sale:
+                prod_carrito = ProductsCart.objects.filter(carrito = instance)
                 if(prod_carrito.count() > 0):
                     for item in prod_carrito:
-                        producto = Producto.objects.get(id = item.producto.id) 
-                        prod_stock = Deposito.objects.filter(producto = producto) 
-                        for deposito in prod_stock:
-                            deposito.stock -= item.cant_prod
-                            deposito.save()
+                        product = Product.objects.get(id = item.producto.id)
+                        prod_stock = Deposit.objects.filter(producto = product)
+                        for deposit in prod_stock:
+                            deposit.stock -= item.cant_prod
+                            deposit.save()
