@@ -41,7 +41,3 @@ class SaleSerializer(serializers.ModelSerializer):
         model = Sale
         fields = '__all__'
         
-# class SupplierSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Supplier
-#         fields = '__all__'

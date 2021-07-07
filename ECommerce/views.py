@@ -44,9 +44,3 @@ class SaleViewSet(viewsets.ModelViewSet):
     queryset = Sale.objects.all()
     serializer_class = SaleSerializer
     permission_classes = []
-
-
-# class SupplierViewSet(viewsets.ModelViewSet):
-#     queryset = Supplier.objects.all()
-#     serializer_class = SupplierSerializer
-#     permission_classes = []
