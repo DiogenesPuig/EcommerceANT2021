@@ -5,20 +5,6 @@ from django.dispatch import receiver
 from model_utils import FieldTracker
 
 # Create your models here.
-class Client(models.Model):
-    user = models.OneToOneField(User,on_delete=models.CASCADE,null=True,blank=True)
-    first_name = models.CharField(max_length=50, default=None)
-    last_name = models.CharField(max_length=50, default=None)
-    tel = models.CharField(max_length=15, default=None)
-    email = models.EmailField(default=None)
-
-    class Meta:
-        verbose_name = 'Client'
-        verbose_name_plural = 'Clients'
-
-    def __str__(self):
-        return self.first_name
-
 class Supplier(models.Model):
     name = models.CharField(max_length=50)
     tel = models.CharField(max_length=15)
@@ -65,7 +51,7 @@ class Deposit(models.Model):
         return str(self.product)
 
 class Cart(models.Model):
-    client = models.ForeignKey(Client, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     product_sale = models.ManyToManyField(Product, through='ProductsCart')
     sold = models.BooleanField()
     tracker = FieldTracker()

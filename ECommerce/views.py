@@ -3,16 +3,10 @@
 from .models import Category
 from .serializers import * 
 from rest_framework import viewsets
-# Create your views here.
 
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    permission_classes = []
-
-class ClientViewSet(viewsets.ModelViewSet):
-    queryset = Client.objects.all()
-    serializer_class = ClientSerializer
     permission_classes = []
 
 class SupplierViewSet(viewsets.ModelViewSet):
@@ -43,4 +37,9 @@ class ProductsCartViewSet(viewsets.ModelViewSet):
 class SaleViewSet(viewsets.ModelViewSet):
     queryset = Sale.objects.all()
     serializer_class = SaleSerializer
+    permission_classes = []
+
+class RegisterViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = RegisterSerializer
     permission_classes = []

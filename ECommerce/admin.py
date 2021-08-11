@@ -22,7 +22,7 @@ class SupplierAdmin(admin.ModelAdmin):
     list_display = ('name', 'tel')
 
 class CartAdmin(admin.ModelAdmin):
-    list_display = ('id','client','get_items_cart','get_monto_cart','sold')
+    list_display = ('id','get_items_cart','get_monto_cart','sold')
 
 class SaleAdmin(admin.ModelAdmin):
     list_display = ('id','cart', 'payment_method','date')
@@ -36,7 +36,6 @@ class DepositAdmin(admin.ModelAdmin):
 
 # Register your models here.
 admin.site.register(Product, ProductAdmin)
-admin.site.register(Client, ClientAdmin)
 admin.site.register(Supplier, SupplierAdmin)
 admin.site.register(Cart, CartAdmin)
 admin.site.register(Sale, SaleAdmin)

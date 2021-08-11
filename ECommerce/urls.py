@@ -5,11 +5,11 @@ app_name='ECommerce'
 
 router = DefaultRouter()
 router.register(r'categories', CategoryViewSet, basename='categories')
-router.register(r'clients', ClientViewSet, basename='clients')
 router.register(r'suppliers', SupplierViewSet, basename='suppliers')
 router.register(r'products', ProductViewSet, basename='products')
 router.register(r'deposits', DepositViewSet, basename='deposits')
 router.register(r'carts', CartViewSet, basename='carts')
 router.register(r'productscarts', ProductsCartViewSet, basename='productscarts')
 router.register(r'sales', SaleViewSet, basename='sales')
+router.register(r'register', RegisterViewSet, basename='register')
 urlpatterns = router.urls
