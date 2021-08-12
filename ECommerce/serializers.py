@@ -36,7 +36,9 @@ class SaleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Sale
         fields = '__all__'
-class RegisterSerializer(serializers.ModelSerializer):
+
+class UserSerializer(serializers.ModelSerializer):
+
     password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
     class Meta:
         model = User
@@ -52,10 +54,7 @@ class RegisterSerializer(serializers.ModelSerializer):
             first_name=validated_data['first_name'],
             last_name=validated_data['last_name']
         )
-
         user.set_password(validated_data['password'])
         user.save()
-        user.objects.create(user=user)
 
         return user
-        

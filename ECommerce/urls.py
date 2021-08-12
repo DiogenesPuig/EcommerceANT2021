@@ -11,5 +11,4 @@ router.register(r'deposits', DepositViewSet, basename='deposits')
 router.register(r'carts', CartViewSet, basename='carts')
 router.register(r'productscarts', ProductsCartViewSet, basename='productscarts')
 router.register(r'sales', SaleViewSet, basename='sales')
-router.register(r'register', RegisterViewSet, basename='register')
 urlpatterns = router.urls

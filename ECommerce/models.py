@@ -100,7 +100,7 @@ class Sale(models.Model):
         ('credito', 'credito'),
     ]
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
-    product_in_cart = models.ForeignKey(ProductsCart, on_delete=models.CASCADE)
+    product_in_cart = models.ForeignKey(ProductsCart, on_delete=models.CASCADE,default='')
     date = models.DateTimeField(auto_now_add=True)
     payment_method = models.CharField(max_length=50, choices=payment_methods, default=None)
 

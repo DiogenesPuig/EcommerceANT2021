@@ -17,9 +17,11 @@ from django.contrib import admin
 from django.urls import include, path
 from django.utils.encoding import smart_text
 from six import python_2_unicode_compatible
+from ECommerce.views import RegisterView
 
 urlpatterns = [
     path('jet/', include('jet.urls', 'jet')),
     path('admin/', admin.site.urls),
     path('api/', include('ECommerce.urls','ECommerce')),
+    path('register/', RegisterView.as_view(), name='register'),
 ]

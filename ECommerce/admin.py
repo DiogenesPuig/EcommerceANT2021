@@ -25,7 +25,7 @@ class CartAdmin(admin.ModelAdmin):
     list_display = ('id','get_items_cart','get_monto_cart','sold')
 
 class SaleAdmin(admin.ModelAdmin):
-    list_display = ('id','cart', 'payment_method','date')
+    list_display = ('id','cart','payment_method','date')
 
 class ProductCartAdmin(admin.ModelAdmin):
     list_display = ('cart','product','cant_prod','get_total')
